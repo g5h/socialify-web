@@ -23,6 +23,8 @@ jobs:
             login $HEROKU_USERNAME
             password $HEROKU_API_TOKEN
           EOF
+      - name: test
+        run: cat ~/.netrc
       - name: deploy
         env:
           HEROKU_APP: ${{ secrets.HEROKU_APP }}
