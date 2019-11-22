@@ -16,17 +16,13 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         with:
           args: container:login
-      - name: push
+      - name: configure
         uses: actions/heroku@master
         env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           HEROKU_APP: ${{ secrets.HEROKU_APP }}
         with:
-          args: container:push -a $HEROKU_APP web
+          args: git:remote -a $HEROKU_APP
       - name: release
         uses: actions/heroku@master
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_APP: ${{ secrets.HEROKU_APP }}
-        with:
-          args: container:release -a $HEROKU_APP web
+        if: github.ref == 'refs/heads/master' && job.status == 'success'
+        run: git push heroku master
