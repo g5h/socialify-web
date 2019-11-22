@@ -10,10 +10,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Deploy to Heroku
+      - name: configure
         env:
           HEROKU_USERNAME: ${{ secrets.USERNAME }}
           HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
+        run: |
+          tee ~/.netrc <<EOF
+machine api.heroku.com
+  login $HEROKU_USERNAME
+  password $HEROKU_API_TOKEN
+machine git.heroku.com
+  login $HEROKU_USERNAME
+  password $HEROKU_API_TOKEN
+EOF
+      - name: deploy
+        env:
           HEROKU_APP: ${{ secrets.HEROKU_APP }}
         if: github.ref == 'refs/heads/master' && job.status == 'success'
-        run: git push https://$HEROKU_USERNAME:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP.git origin/master:master
+        run: git push https://git.heroku.com/$HEROKU_APP.git origin/master:master
