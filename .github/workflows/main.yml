@@ -23,6 +23,5 @@ jobs:
         with:
           args: git:remote -a $HEROKU_APP
       - name: release
-        uses: actions/heroku@master
         if: github.ref == 'refs/heads/master' && job.status == 'success'
         run: git push heroku master
